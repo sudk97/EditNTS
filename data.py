@@ -107,7 +107,7 @@ class Vocab():
             for i,line in enumerate(f):
                 if i >=vocab_size:
                     break
-                self.word_list.append(line.split()[0])  # only want the word, not the count
+                self.word_list.append(line.split()[0].decode("utf-8"))  # only want the word, not the count
         print("read %d words from vocab file" % len(self.word_list))
 
         for w in self.word_list:
@@ -141,7 +141,7 @@ class POSvocab():
         self.i2w = {}
         self.count = 0
         self.embedding = None
-        with open(vocab_path+'postag_set.p','r') as f:
+        with open(vocab_path+'postag_set.p','rb') as f:
             # postag_set is from NLTK
             tagdict = pickle.load(f)
 

@@ -12,7 +12,7 @@ def corpus_bleu(path_tar=None, path_comp=None, path_ref=None, num_refs=None):
     :param num_refs: the number of references, 8 in wikilarge, and 1 in other datasets
     :return: none, print the evaluation score
     """
-    a = get_result_joshua(path_ref, path_tar,num_refs)
+    a = get_result_joshua(path_ref, path_tar, num_refs)
     print(a)
 
 def get_result_joshua(path_ref, path_tar, num_refs):

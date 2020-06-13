@@ -110,14 +110,14 @@ def training(edit_net,nepochs, args, vocab, print_every=100, check_every=500):
         for i, batch_df in train_dataset.batch_generator(batch_size=args.batch_size, shuffle=True):
 
             #     time1 = time.time()
-            prepared_batch, syn_tokens_list = data.prepare_batch(batch_df, vocab, args.max_seq_len) #comp,scpn,simp
+            prepared_batch, syn_tokens_list = data.prepare_batch(batch_df, vocab, args.max_seq_len) #[inp, inp_pos, edit_ids, inp_simp], comp_tokens
 
             # a batch of complex tokens in vocab ids, sorted in descending order
-            org_ids = prepared_batch[0]
+            org_ids = prepared_batch[0] #inp
             org_lens = org_ids.ne(0).sum(1)
             org = sort_by_lens(org_ids, org_lens)  # inp=[inp_sorted, inp_lengths_sorted, inp_sort_order]
             # a batch of pos-tags in pos-tag ids for complex
-            org_pos_ids = prepared_batch[1]
+            org_pos_ids = prepared_batch[1] 
             org_pos_lens = org_pos_ids.ne(0).sum(1)
             org_pos = sort_by_lens(org_pos_ids, org_pos_lens)
 
@@ -127,10 +127,10 @@ def training(edit_net,nepochs, args, vocab, print_every=100, check_every=500):
             simp_ids = prepared_batch[3]
 
             editnet_optimizer.zero_grad()
-            output = edit_net(org, out, org_ids, org_pos,simp_ids)
+            output = edit_net(org, out, org_ids, org_pos, simp_ids)
             ##################calculate loss
             tar_lens = tar.ne(0).sum(1).float()
-            tar_flat=tar.contiguous().view(-1)
+            tar_flat = tar.contiguous().view(-1)
             loss = editnet_criterion(output.contiguous().view(-1, vocab.count), tar_flat).contiguous()
             loss[tar_flat == 1] = 0 #remove loss for UNK
             loss = loss.view(tar.size())
